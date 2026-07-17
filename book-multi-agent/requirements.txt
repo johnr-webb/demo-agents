@@ -1,0 +1,6 @@
+litellm
+python-docx
+openpyxl
+pypdf
+ddgs
+python-dotenv
