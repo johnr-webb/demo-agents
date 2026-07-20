@@ -1,6 +1,2 @@
-litellm
-python-docx
-openpyxl
-pypdf
-ddgs
-python-dotenv
+litellm>=1.50.0
+python-dotenv>=1.0.0
