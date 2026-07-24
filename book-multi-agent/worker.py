@@ -35,3 +35,41 @@ def run_shell(command: str) -> str:
                 return "DENIED by human"
     proc = subprocess.run(command, shell=True, cwd=WORKSPACE_DIR, capture_output=True, text=True, timeout=120)
     return f"exit={proc.returncode}\nstdout:\n{proc.stdout}\nstderr:\n{proc.stderr}"
+
+_hitl_lock = threading.Lock()
+
+def _tool(name, desc, props, required):
+    return {
+        "type": "function", 
+        "function": {
+            "name": name, 
+            "description": desc,
+            "parameters": {
+                "type": "object",
+                "properties": props,
+                "required": required
+            }
+        }
+    }
+
+TOOLS = [
+    _tool("read_file", "Read a file from the workspace.", {"path": {"type": "string"}}, ["path"]),
+    _tool("write_file", "Write (overwrite) a file in the workspace.", {"path": {"type": "string"}, "content": {"type": "string"}},["path", "content"]),
+    _tool("list_files", "List every file in the workspace.", {}, []),
+    _tool("run_shell", "Run a shell command in the workspace. Risky commands require human approval.",{"command": {"type": "string"}}, ["command"])
+]
+
+HANDLERS = {
+    "read_file": read_file,
+    "write_file": write_file,
+    "list_files": list_files,
+    "run_shell": run_shell
+}
+
+READ_ONLY_TOOLS = [
+    t for t in TOOLS if t["function"]["name"] in ("read_file", "list_files")
+]
+
+READ_ONLY_HANDLERS = {
+    k: v for k, v in HANDLERS.items() if k in ("read_file", "list_files")
+}
