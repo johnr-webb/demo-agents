@@ -1,7 +1,8 @@
 import subprocess
 import threading
 from pathlib import Path
-from config import Workspace
+from config import WORKSPACE, MODELS, MAX_AGENT_STEPS
+from llm import run_agent
 
 WORKSPACE_DIR = Path(WORKSPACE).resolve()
 WORKSPACE_DIR.mkdir(parents=True, exist_ok=True)
@@ -73,3 +74,20 @@ READ_ONLY_TOOLS = [
 READ_ONLY_HANDLERS = {
     k: v for k, v in HANDLERS.items() if k in ("read_file", "list_files")
 }
+
+SYSTEM = """You are a Worker agent in a multi-agent coding system.
+You are given ONE subtask. Complete it fully using your tools (read_file,
+write_file, list_files, run_shell) inside a shared workspace. Other workers may
+have produced files you can build on - inspect the workspace before you start.
+When finished, reply with a short summary of what you did and which files you touched."""
+
+def _prompt(ctx):
+    parts = [f"Overall task: {ctx['task']}", f"Your subtask: {ctx['subtask']}"]
+    if ctx["completed"]:
+        parts.append("Already done by other workers:\n" + "\n".join(ctx["completed"]))
+    if ctx["feedback"]:
+        parts.append("Verifier feedback to address:\n" + "\n".join(f"- {f}" for f in ctx["feedback"]))
+    return "\n\n".join(parts)
+
+def run_worker(ctx):
+    return run_agent(MODELS["worker"], SYSTEM, _prompt(ctx), TOOLS, HANDLERS, MAX_AGENT_STEPS)

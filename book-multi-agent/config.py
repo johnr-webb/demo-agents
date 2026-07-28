@@ -12,3 +12,8 @@ MODELS = {
 
 WORKSPACE = os.getenv("WORKSPACE", "./workspace")
 SCRATCHPAD_PATH = os.getenv("SCRATCHPAD", "./scratchpad.json")
+
+MAX_AGENT_STEPS = int(os.getenv("MAX_AGENT_STEPS", "15"))
+MAX_REVISIONS = int(os.getenv("MAX_REVISIONS", "2"))
+MAX_REPLANS = int(os.getenv("MAX_REPLANS", "1"))
+MAX_PARALLEL_WORKERS = int(os.getenv("MAX_PARALLEL_WORKERS", "4"))

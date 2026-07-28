@@ -49,7 +49,7 @@ class Scratchpad:
     def context_for(self, sid):
         with self.lock:
             sub = self.state["plan"][sid]
-            deps = [self.state["plan"][d] for d in sub["deps"]]
+            deps = [self.state["plan"][int(d)] for d in sub["deps"]]
             completed = [f"- [{d['id']}] {d['description']} -> {d['summary']}" for d in deps if d["status"] == "pass"]
             context = {
                 "task": self.state["task"],

@@ -45,3 +45,11 @@ Reply with JSON only, in this exact shape:
 }
 Id must be consecutive integers starting at 0.
 """
+
+def _json(raw):
+    raw = (raw or "").strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    return json.loads(raw)
+
+def plan(task):
+    msg = chat(MODELS["orchestrator"], SYSTEM, [{"role": "user", "content": task}])
+    return _json(msg.content)["subtasks"]
