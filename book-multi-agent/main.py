@@ -9,7 +9,6 @@ from verifier import verify
 
 logging.getLogger("LiteLLM").setLevel(logging.ERROR)
 
-
 def run_subtask(pad, sid):
     result = ""
     for _ in range(MAX_REVISIONS + 1):

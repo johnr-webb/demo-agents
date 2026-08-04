@@ -54,7 +54,7 @@ class Scratchpad:
             context = {
                 "task": self.state["task"],
                 "completed": completed,
-                "subtask": sub["description"],
+                "subta  sk": sub["description"],
                 "feedback": list(sub.get("feedback", []))
             }
             return context
